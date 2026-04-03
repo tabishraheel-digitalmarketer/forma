@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FORMA — Artisan Furniture Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --cream:   #F5F0E8;
+      --sand:    #E2D5C3;
+      --walnut:  #4A3728;
+      --bark:    #7D5C45;
+      --slate:   #2C2C2C;
+      --accent:  #C08B5C;
+      --white:   #FDFAF5;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-mono:    'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--slate);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.03em;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── NAVBAR ── */
+    #mainNav {
+      background: var(--white);
+      border-bottom: 1px solid var(--sand);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: box-shadow 0.3s;
+    }
+    #mainNav.scrolled { box-shadow: 0 2px 30px rgba(74,55,40,0.08); }
+
+    .nav-brand {
+      font-family: var(--font-display);
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--walnut) !important;
+      text-decoration: none;
+    }
+    .nav-label {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bark);
+      display: block;
+      margin-top: -6px;
+    }
+
+    .navbar-nav .nav-link {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--slate) !important;
+      padding: 1.6rem 1rem !important;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .navbar-nav .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 1rem; right: 1rem;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .navbar-nav .nav-link:hover { color: var(--walnut) !important; }
+    .navbar-nav .nav-link:hover::after { transform: scaleX(1); }
+
+    .nav-icon-btn {
+      background: none;
+      border: none;
+      color: var(--slate);
+      font-size: 1.1rem;
+      padding: 0.4rem 0.5rem;
+      position: relative;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .nav-icon-btn:hover { color: var(--walnut); }
+
+    .cart-badge {
+      position: absolute;
+      top: 0; right: 0;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 9px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 92vh;
+      background: var(--walnut);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .hero-bg-text {
+      position: absolute;
+      font-family: var(--font-display);
+      font-size: clamp(100px, 18vw, 260px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -0.02em;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+    .hero-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title em { font-style: italic; color: var(--sand); }
+    .hero-subtitle {
+      color: rgba(245,240,232,0.55);
+      font-size: 12px;
+      line-height: 1.9;
+      max-width: 340px;
+      margin-bottom: 2.5rem;
+    }
+    .btn-primary-custom {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--white);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      border: none;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+    .btn-primary-custom:hover { background: var(--bark); color: var(--white); transform: translateY(-1px); }
+
+    .btn-outline-custom {
+      display: inline-block;
+      background: transparent;
+      color: var(--cream);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 13px 30px;
+      border: 1px solid rgba(245,240,232,0.3);
+      text-decoration: none;
+      margin-left: 1rem;
+      transition: border-color 0.3s, color 0.3s;
+      cursor: pointer;
+    }
+    .btn-outline-custom:hover { border-color: var(--cream); color: var(--cream); }
+
+    .hero-image-col {
+      position: relative;
+    }
+    .hero-img-frame {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: linear-gradient(145deg, #6B4E38, #3A2A1E);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-img-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533'%3E%3Crect width='400' height='533' fill='%234A3728' opacity='0.3'/%3E%3Cellipse cx='200' cy='200' rx='140' ry='180' fill='%23C08B5C' opacity='0.12'/%3E%3Crect x='80' y='280' width='240' height='160' rx='4' fill='%237D5C45' opacity='0.25'/%3E%3Crect x='100' y='260' width='200' height='20' rx='2' fill='%235C3D2E' opacity='0.4'/%3E%3C/svg%3E");
+      background-size: cover;
+    }
+    .hero-furniture-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: contain;
+      padding: 40px;
+    }
+    .hero-stat {
+      position: absolute;
+      background: var(--cream);
+      padding: 16px 22px;
+      bottom: -20px;
+      left: -30px;
+    }
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--walnut);
+      display: block;
+      line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bark);
+    }
+    .hero-year-tag {
+      position: absolute;
+      top: 20px; right: -20px;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      padding: 8px 14px;
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      background: var(--accent);
+      overflow: hidden;
+      padding: 10px 0;
+      white-space: nowrap;
+    }
+    .ticker-track {
+      display: inline-block;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-item {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white);
+      padding: 0 3rem;
+    }
+    .ticker-dot { color: rgba(255,255,255,0.5); }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── SECTION HEADERS ── */
+    .section-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 300;
+      color: var(--walnut);
+      line-height: 1.15;
+    }
+    .section-title em { font-style: italic; }
+
+    /* ── CATEGORIES ── */
+    #categories { padding: 80px 0; background: var(--white); }
+    .cat-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+    }
+    .cat-img {
+      width: 100%;
+      aspect-ratio: 1/1.2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      padding: 24px;
+      transition: transform 0.5s ease;
+    }
+    .cat-card:hover .cat-img { transform: scale(1.03); }
+    .cat-img-1 { background: linear-gradient(160deg, #6B4E38 0%, #3A2A1E 100%); }
+    .cat-img-2 { background: linear-gradient(160deg, #8B7355 0%, #4A3728 100%); }
+    .cat-img-3 { background: linear-gradient(160deg, #5C4A3A 0%, #2E1F14 100%); }
+    .cat-img-4 { background: linear-gradient(160deg, #9B8B6E 0%, #5A4030 100%); }
+    .cat-name {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+    .cat-count {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.6);
+      text-transform: uppercase;
+      display: block;
+      margin-top: 4px;
+    }
+    .cat-arrow {
+      position: absolute;
+      top: 20px; right: 20px;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(245,240,232,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--cream);
+      font-size: 0.9rem;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .cat-card:hover .cat-arrow { background: var(--accent); border-color: var(--accent); }
+
+    /* ── PRODUCTS ── */
+    #products { padding: 80px 0; background: var(--cream); }
+    .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid var(--sand);
+      color: var(--slate);
+      padding: 7px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--walnut); border-color: var(--walnut); color: var(--cream); }
+
+    .product-card {
+      background: var(--white);
+      overflow: hidden;
+      transition: box-shadow 0.3s;
+      position: relative;
+    }
+    .product-card:hover { box-shadow: 0 8px 40px rgba(74,55,40,0.12); }
+
+    .product-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3.5;
+      background: var(--sand);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .product-img-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .product-badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+    }
+    .badge-new { background: var(--walnut); color: var(--cream); }
+    .badge-sale { background: var(--accent); color: var(--white); }
+
+    .product-actions {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: var(--walnut);
+      padding: 12px;
+      display: flex; gap: 8px;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+    .product-card:hover .product-actions { transform: translateY(0); }
+
+    .action-btn {
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 9px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .action-btn-primary { background: var(--accent); color: var(--white); }
+    .action-btn-primary:hover { background: var(--bark); }
+    .action-btn-icon {
+      background: rgba(255,255,255,0.1);
+      color: var(--cream);
+      width: 38px; flex: none;
+    }
+    .action-btn-icon:hover { background: rgba(255,255,255,0.2); }
+
+    .product-body { padding: 18px 20px 20px; }
+    .product-material {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bark);
+      margin-bottom: 5px;
+    }
+    .product-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--walnut);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .product-price {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--walnut);
+    }
+    .product-price-old {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--bark);
+      text-decoration: line-through;
+      margin-left: 6px;
+      font-weight: 300;
+    }
+    .product-rating { color: var(--accent); font-size: 10px; margin-top: 4px; }
+    .product-rating span { color: var(--bark); margin-left: 4px; }
+
+    /* ── FEATURED BANNER ── */
+    #featured-banner {
+      background: var(--walnut);
+      padding: 80px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    #featured-banner::before {
+      content: 'CRAFTED';
+      position: absolute;
+      font-family: var(--font-display);
+      font-size: clamp(80px, 14vw, 200px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.03);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .featured-tag {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 5px 14px;
+      margin-bottom: 1.5rem;
+    }
+    .featured-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .featured-title em { font-style: italic; color: var(--sand); }
+    .featured-desc {
+      color: rgba(245,240,232,0.5);
+      font-size: 12px;
+      line-height: 1.9;
+      margin-bottom: 2rem;
+      max-width: 360px;
+    }
+    .featured-price {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 2rem;
+    }
+    .featured-price small {
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(245,240,232,0.5);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { padding: 80px 0; background: var(--white); }
+    .testimonial-card {
+      border: 1px solid var(--sand);
+      padding: 36px;
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '\201C';
+      font-family: var(--font-display);
+      font-size: 5rem;
+      color: var(--sand);
+      position: absolute;
+      top: 10px; left: 30px;
+      line-height: 1;
+    }
+    .testimonial-text {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--walnut);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .testimonial-author {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bark);
+    }
+    .testimonial-rating { color: var(--accent); font-size: 11px; margin-bottom: 0.5rem; }
+
+    /* ── NEWSLETTER ── */
+    #newsletter {
+      padding: 70px 0;
+      background: var(--sand);
+      text-align: center;
+    }
+    .newsletter-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 300;
+      color: var(--walnut);
+      margin-bottom: 0.8rem;
+    }
+    .newsletter-sub {
+      font-size: 12px;
+      color: var(--bark);
+      margin-bottom: 2rem;
+    }
+    .newsletter-form {
+      display: flex;
+      max-width: 480px;
+      margin: 0 auto;
+      gap: 0;
+    }
+    .newsletter-input {
+      flex: 1;
+      border: 1px solid var(--bark);
+      border-right: none;
+      background: var(--white);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 14px 18px;
+      color: var(--slate);
+      outline: none;
+    }
+    .newsletter-input::placeholder { color: var(--bark); }
+    .newsletter-submit {
+      background: var(--walnut);
+      color: var(--cream);
+      border: 1px solid var(--walnut);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 14px 24px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .newsletter-submit:hover { background: var(--bark); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--slate);
+      color: rgba(245,240,232,0.6);
+      padding: 60px 0 30px;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--cream);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .footer-tagline {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bark);
+      margin-bottom: 1.5rem;
+    }
+    .footer-desc { font-size: 11px; line-height: 1.9; max-width: 260px; }
+    .footer-heading {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 0.6rem; }
+    .footer-links a {
+      font-size: 11px;
+      color: rgba(245,240,232,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-divider { border-color: rgba(245,240,232,0.08); margin: 40px 0 20px; }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 10px; letter-spacing: 0.1em; color: rgba(245,240,232,0.3);
+    }
+    .footer-socials { display: flex; gap: 0.8rem; }
+    .social-link {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(245,240,232,0.15);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(245,240,232,0.4);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .social-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── CART OFFCANVAS ── */
+    #cartOffcanvas { background: var(--white); }
+    .offcanvas-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--walnut);
+      letter-spacing: 0.05em;
+    }
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--sand);
+    }
+    .cart-item-img {
+      width: 70px; height: 70px;
+      background: var(--sand);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cart-item-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--walnut);
+      margin-bottom: 3px;
+    }
+    .cart-item-meta { font-size: 10px; color: var(--bark); letter-spacing: 0.1em; }
+    .cart-item-price {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--walnut);
+      font-weight: 600;
+    }
+    .cart-qty-btn {
+      background: var(--sand);
+      border: none;
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.8rem;
+      transition: background 0.2s;
+    }
+    .cart-qty-btn:hover { background: var(--bark); color: var(--white); }
+    .cart-qty { display: inline-block; width: 28px; text-align: center; font-family: var(--font-mono); font-size: 12px; }
+    .cart-total-bar {
+      border-top: 1px solid var(--sand);
+      padding-top: 16px;
+      margin-top: 8px;
+    }
+    .cart-total-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); }
+    .cart-total-amount {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--walnut);
+    }
+
+    /* ── SEARCH MODAL ── */
+    #searchModal .modal-dialog { max-width: 600px; }
+    #searchModal .modal-content {
+      border: none;
+      background: var(--white);
+      border-radius: 0;
+    }
+    #searchModal .modal-body { padding: 2rem; }
+    .search-input {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid var(--walnut);
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--walnut);
+      background: transparent;
+      padding: 12px 0;
+      outline: none;
+    }
+    .search-input::placeholder { color: var(--sand); }
+    .search-hint { font-size: 10px; color: var(--bark); letter-spacing: 0.12em; margin-top: 10px; }
+
+    /* ── ANIMATIONS ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up:nth-child(2) { transition-delay: 0.1s; }
+    .fade-up:nth-child(3) { transition-delay: 0.2s; }
+    .fade-up:nth-child(4) { transition-delay: 0.3s; }
+
+    /* ── TOAST ── */
+    .toast-container { z-index: 9999; }
+    .custom-toast {
+      background: var(--walnut);
+      color: var(--cream);
+      border: none;
+      border-radius: 0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero-stat { display: none; }
+      .hero-year-tag { display: none; }
+      .newsletter-form { flex-direction: column; }
+      .newsletter-input { border-right: 1px solid var(--bark); }
+      .footer-bottom { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg" id="mainNav">
+  <div class="container-fluid px-4">
+    <a class="nav-brand me-auto" href="#">
+      FORMA
+      <span class="nav-label">Artisan Furniture Studio</span>
+    </a>
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <i class="bi bi-list fs-5"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item"><a class="nav-link" href="#categories">Collections</a></li>
+        <li class="nav-item"><a class="nav-link" href="#products">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="#featured-banner">Featured</a></li>
+        <li class="nav-item"><a class="nav-link" href="#testimonials">Journal</a></li>
+        <li class="nav-item"><a class="nav-link" href="#newsletter">Contact</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-1">
+        <button class="nav-icon-btn" data-bs-toggle="modal" data-bs-target="#searchModal" title="Search">
+          <i class="bi bi-search"></i>
+        </button>
+        <button class="nav-icon-btn" title="Wishlist">
+          <i class="bi bi-heart"></i>
+        </button>
+        <button class="nav-icon-btn position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" title="Cart">
+          <i class="bi bi-bag"></i>
+          <span class="cart-badge" id="cartCount">3</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <span class="hero-bg-text">FORMA</span>
+  <div class="container-fluid px-4 px-lg-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <p class="hero-label">— New Collection 2026</p>
+        <h1 class="hero-title">
+          Where <em>timber</em><br>meets<br>tranquility
+        </h1>
+        <p class="hero-subtitle">
+          Each piece is shaped by hand, finished with intention, and built to outlast generations. Furniture for those who refuse the ordinary.
+        </p>
+        <a href="#products" class="btn-primary-custom">Explore Collection</a>
+        <a href="#featured-banner" class="btn-outline-custom">View Lookbook</a>
+      </div>
+      <div class="col-lg-5 offset-lg-1 d-none d-lg-block">
+        <div class="hero-image-col">
+          <div class="hero-img-frame">
+            <svg class="hero-furniture-svg" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Chair illustration -->
+              <rect x="80" y="160" width="140" height="12" rx="3" fill="#C08B5C" opacity="0.9"/>
+              <rect x="90" y="80" width="120" height="85" rx="6" fill="#7D5C45" opacity="0.8"/>
+              <rect x="85" y="172" width="10" height="120" rx="3" fill="#5C3D2E" opacity="0.9"/>
+              <rect x="205" y="172" width="10" height="120" rx="3" fill="#5C3D2E" opacity="0.9"/>
+              <rect x="110" y="172" width="10" height="90" rx="3" fill="#5C3D2E" opacity="0.8"/>
+              <rect x="180" y="172" width="10" height="90" rx="3" fill="#5C3D2E" opacity="0.8"/>
+              <rect x="75" y="280" width="150" height="8" rx="2" fill="#C08B5C" opacity="0.7"/>
+              <!-- Side table -->
+              <rect x="230" y="220" width="55" height="5" rx="2" fill="#9B8B6E" opacity="0.8"/>
+              <rect x="238" y="225" width="6" height="67" rx="2" fill="#7D5C45" opacity="0.7"/>
+              <rect x="270" y="225" width="6" height="67" rx="2" fill="#7D5C45" opacity="0.7"/>
+              <!-- Plant on table -->
+              <ellipse cx="258" cy="218" rx="12" ry="18" fill="#4A6741" opacity="0.6"/>
+              <rect x="254" y="215" width="8" height="5" rx="1" fill="#3A2A1E" opacity="0.5"/>
+              <!-- Floor line -->
+              <line x1="40" y1="292" x2="260" y2="292" stroke="#C08B5C" stroke-width="1" opacity="0.3"/>
+              <!-- Decorative lines -->
+              <line x1="40" y1="340" x2="260" y2="340" stroke="rgba(245,240,232,0.1)" stroke-width="0.5"/>
+            </svg>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">840+</span>
+            <span class="hero-stat-lbl">Pieces Crafted</span>
+          </div>
+          <div class="hero-year-tag">Est. 2009</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="ticker-item">Free shipping over $800 <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Handcrafted in Portugal <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">10-year craftsmanship warranty <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Sustainably sourced timber <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">White-glove delivery service <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Free shipping over $800 <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Handcrafted in Portugal <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">10-year craftsmanship warranty <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Sustainably sourced timber <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">White-glove delivery service <span class="ticker-dot">◆</span></span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section id="categories">
+  <div class="container-fluid px-4 px-lg-5">
+    <div class="row mb-5">
+      <div class="col">
+        <span class="section-eyebrow">Browse by Room</span>
+        <h2 class="section-title">Shop by <em>Category</em></h2>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-6 col-lg-3">
+        <a href="#" class="cat-card">
+          <div class="cat-img cat-img-1">
+            <div>
+              <span class="cat-name">Living<br>Room</span>
+              <span class="cat-count">48 pieces</span>
+            </div>
+          </div>
+          <div class="cat-arrow"><i class="bi bi-arrow-up-right"></i></div>
+        </a>
+      </div>
+      <div class="col-6 col-lg-3">
+        <a href="#" class="cat-card">
+          <div class="cat-img cat-img-2">
+            <div>
+              <span class="cat-name">Dining<br>Room</span>
+              <span class="cat-count">32 pieces</span>
+            </div>
+          </div>
+          <div class="cat-arrow"><i class="bi bi-arrow-up-right"></i></div>
+        </a>
+      </div>
+      <div class="col-6 col-lg-3">
+        <a href="#" class="cat-card">
+          <div class="cat-img cat-img-3">
+            <div>
+              <span class="cat-name">Bedroom<br>Suite</span>
+              <span class="cat-count">27 pieces</span>
+            </div>
+          </div>
+          <div class="cat-arrow"><i class="bi bi-arrow-up-right"></i></div>
+        </a>
+      </div>
+      <div class="col-6 col-lg-3">
+        <a href="#" class="cat-card">
+          <div class="cat-img cat-img-4">
+            <div>
+              <span class="cat-name">Home<br>Office</span>
+              <span class="cat-count">19 pieces</span>
+            </div>
+          </div>
+          <div class="cat-arrow"><i class="bi bi-arrow-up-right"></i></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="container-fluid px-4 px-lg-5">
+    <div class="row align-items-end mb-4">
+      <div class="col-lg-6">
+        <span class="section-eyebrow">Handpicked for You</span>
+        <h2 class="section-title">New <em>Arrivals</em></h2>
+      </div>
+      <div class="col-lg-6 text-lg-end">
+        <a href="#" style="font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--walnut); text-decoration:none;">View All <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="seating">Seating</button>
+      <button class="filter-btn" data-filter="tables">Tables</button>
+      <button class="filter-btn" data-filter="storage">Storage</button>
+      <button class="filter-btn" data-filter="beds">Beds</button>
+    </div>
+
+    <div class="row g-4" id="productsGrid">
+
+      <!-- Product 1 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="seating">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <rect x="60" y="80" width="120" height="10" rx="2" fill="#C08B5C" opacity="0.8"/>
+                <rect x="70" y="30" width="100" height="55" rx="4" fill="#7D5C45" opacity="0.7"/>
+                <rect x="63" y="90" width="8" height="90" rx="2" fill="#5C3D2E"/>
+                <rect x="169" y="90" width="8" height="90" rx="2" fill="#5C3D2E"/>
+                <rect x="90" y="90" width="8" height="60" rx="2" fill="#5C3D2E" opacity="0.8"/>
+                <rect x="142" y="90" width="8" height="60" rx="2" fill="#5C3D2E" opacity="0.8"/>
+                <rect x="55" y="175" width="130" height="6" rx="2" fill="#C08B5C" opacity="0.6"/>
+              </svg>
+            </div>
+            <span class="product-badge badge-new">New</span>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Walnut Lounge Chair', 1240)">Add to Cart</button>
+              <button class="action-btn action-btn-icon" title="Wishlist"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon" title="Quick View"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">Solid Walnut · Leather</p>
+            <h3 class="product-name">Lounge Chair No. 7</h3>
+            <div>
+              <span class="product-price">$1,240</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+              <span>(24)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="tables">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <ellipse cx="120" cy="85" rx="90" ry="14" fill="#9B8B6E" opacity="0.9"/>
+                <rect x="108" y="99" width="10" height="85" rx="3" fill="#7D5C45"/>
+                <rect x="122" y="99" width="10" height="85" rx="3" fill="#7D5C45"/>
+                <ellipse cx="120" cy="86" rx="90" ry="14" fill="#C08B5C" opacity="0.8"/>
+              </svg>
+            </div>
+            <span class="product-badge badge-sale">−20%</span>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Oval Dining Table', 2100)">Add to Cart</button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">White Oak · Brass</p>
+            <h3 class="product-name">Oval Dining Table</h3>
+            <div>
+              <span class="product-price">$2,100</span>
+              <span class="product-price-old">$2,625</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+              <span>(41)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="storage">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <rect x="50" y="30" width="140" height="155" rx="3" fill="#7D5C45" opacity="0.8"/>
+                <rect x="55" y="35" width="130" height="68" rx="2" fill="#5C3D2E" opacity="0.7"/>
+                <rect x="55" y="110" width="130" height="68" rx="2" fill="#5C3D2E" opacity="0.7"/>
+                <circle cx="118" cy="70" r="5" fill="#C08B5C"/>
+                <circle cx="122" cy="70" r="5" fill="#C08B5C"/>
+                <circle cx="118" cy="144" r="5" fill="#C08B5C"/>
+                <circle cx="122" cy="144" r="5" fill="#C08B5C"/>
+                <rect x="50" y="180" width="20" height="8" rx="1" fill="#3A2A1E"/>
+                <rect x="170" y="180" width="20" height="8" rx="1" fill="#3A2A1E"/>
+              </svg>
+            </div>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Sideboard Cabinet', 1890)">Add to Cart</button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">Teak · Rattan</p>
+            <h3 class="product-name">Sideboard Cabinet</h3>
+            <div>
+              <span class="product-price">$1,890</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+              <span>(17)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 4 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="seating">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <rect x="30" y="100" width="180" height="18" rx="5" fill="#C08B5C" opacity="0.9"/>
+                <rect x="50" y="55" width="140" height="50" rx="8" fill="#9B8B6E" opacity="0.8"/>
+                <rect x="30" y="55" width="18" height="80" rx="5" fill="#9B8B6E" opacity="0.8"/>
+                <rect x="192" y="55" width="18" height="80" rx="5" fill="#9B8B6E" opacity="0.8"/>
+                <rect x="38" y="118" width="8" height="65" rx="2" fill="#5C3D2E"/>
+                <rect x="194" y="118" width="8" height="65" rx="2" fill="#5C3D2E"/>
+                <rect x="90" y="118" width="8" height="50" rx="2" fill="#5C3D2E" opacity="0.7"/>
+                <rect x="142" y="118" width="8" height="50" rx="2" fill="#5C3D2E" opacity="0.7"/>
+              </svg>
+            </div>
+            <span class="product-badge badge-new">New</span>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Three-Seat Sofa', 3400)">Add to Cart</button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">Oak · Bouclé Fabric</p>
+            <h3 class="product-name">Three-Seat Sofa</h3>
+            <div>
+              <span class="product-price">$3,400</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+              <span>(58)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 5 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="tables">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <rect x="60" y="60" width="120" height="70" rx="3" fill="#7D5C45" opacity="0.9"/>
+                <rect x="60" y="60" width="120" height="8" rx="2" fill="#C08B5C" opacity="0.9"/>
+                <rect x="68" y="130" width="6" height="55" rx="2" fill="#5C3D2E"/>
+                <rect x="166" y="130" width="6" height="55" rx="2" fill="#5C3D2E"/>
+                <rect x="80" y="80" width="80" height="40" rx="2" fill="#5C3D2E" opacity="0.4"/>
+              </svg>
+            </div>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Writing Desk', 980)">Add to Cart</button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">Cherry Wood · Steel</p>
+            <h3 class="product-name">Writing Desk</h3>
+            <div>
+              <span class="product-price">$980</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+              <span>(12)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 6 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="beds">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <rect x="30" y="100" width="180" height="12" rx="2" fill="#C08B5C" opacity="0.9"/>
+                <rect x="30" y="55" width="180" height="50" rx="4" fill="#E2D5C3" opacity="0.9"/>
+                <rect x="40" y="62" width="70" height="35" rx="3" fill="#F5F0E8" opacity="0.8"/>
+                <rect x="125" y="62" width="75" height="35" rx="3" fill="#F5F0E8" opacity="0.8"/>
+                <rect x="30" y="40" width="14" height="72" rx="3" fill="#7D5C45"/>
+                <rect x="196" y="40" width="14" height="72" rx="3" fill="#7D5C45"/>
+                <rect x="28" y="112" width="8" height="50" rx="2" fill="#5C3D2E"/>
+                <rect x="204" y="112" width="8" height="50" rx="2" fill="#5C3D2E"/>
+              </svg>
+            </div>
+            <span class="product-badge badge-sale">−15%</span>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Platform Bed Frame', 2550)">Add to Cart</button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">Walnut · Linen</p>
+            <h3 class="product-name">Platform Bed Frame</h3>
+            <div>
+              <span class="product-price">$2,550</span>
+              <span class="product-price-old">$3,000</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+              <span>(33)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 7 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="seating">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <rect x="85" y="30" width="70" height="80" rx="35" fill="#9B8B6E" opacity="0.9"/>
+                <rect x="80" y="100" width="80" height="12" rx="3" fill="#C08B5C" opacity="0.9"/>
+                <rect x="90" y="112" width="8" height="65" rx="3" fill="#5C3D2E"/>
+                <rect x="142" y="112" width="8" height="65" rx="3" fill="#5C3D2E"/>
+                <rect x="75" y="168" width="90" height="6" rx="2" fill="#C08B5C" opacity="0.6"/>
+              </svg>
+            </div>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Barrel Accent Chair', 760)">Add to Cart</button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">Ash Wood · Velvet</p>
+            <h3 class="product-name">Barrel Accent Chair</h3>
+            <div>
+              <span class="product-price">$760</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+              <span>(9)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 8 -->
+      <div class="col-6 col-lg-3 fade-up" data-cat="storage">
+        <div class="product-card">
+          <div class="product-img-wrap">
+            <div class="product-img-placeholder">
+              <svg viewBox="0 0 240 200" width="100%" height="100%" fill="none">
+                <rect x="55" y="25" width="130" height="160" rx="3" fill="#7D5C45" opacity="0.7"/>
+                <rect x="60" y="30" width="55" height="70" rx="2" fill="#5C3D2E" opacity="0.7"/>
+                <rect x="125" y="30" width="55" height="70" rx="2" fill="#5C3D2E" opacity="0.7"/>
+                <rect x="60" y="108" width="55" height="70" rx="2" fill="#5C3D2E" opacity="0.6"/>
+                <rect x="125" y="108" width="55" height="35" rx="2" fill="#5C3D2E" opacity="0.6"/>
+                <rect x="125" y="148" width="55" height="30" rx="2" fill="#5C3D2E" opacity="0.6"/>
+                <circle cx="85" cy="65" r="4" fill="#C08B5C"/>
+                <circle cx="150" cy="65" r="4" fill="#C08B5C"/>
+                <circle cx="85" cy="143" r="4" fill="#C08B5C"/>
+              </svg>
+            </div>
+            <span class="product-badge badge-new">New</span>
+            <div class="product-actions">
+              <button class="action-btn action-btn-primary" onclick="addToCart('Modular Bookcase', 1340)">Add to Cart</button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-heart"></i></button>
+              <button class="action-btn action-btn-icon"><i class="bi bi-eye"></i></button>
+            </div>
+          </div>
+          <div class="product-body">
+            <p class="product-material">Oak · Cane</p>
+            <h3 class="product-name">Modular Bookcase</h3>
+            <div>
+              <span class="product-price">$1,340</span>
+            </div>
+            <div class="product-rating">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+              <span>(22)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /row -->
+  </div>
+</section>
+
+<!-- FEATURED BANNER -->
+<section id="featured-banner">
+  <div class="container-fluid px-4 px-lg-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="featured-tag">— Editor's Pick</div>
+        <h2 class="featured-title">
+          The Sintra<br><em>Dining Set</em>
+        </h2>
+        <p class="featured-desc">
+          Inspired by the limestone hills of Sintra, this dining set brings together hand-carved solid walnut legs with a book-matched veneer tabletop. Seats eight with dignity.
+        </p>
+        <div class="featured-price">
+          $4,800 <small>/ set of 9</small>
+        </div>
+        <a href="#" class="btn-primary-custom">Shop This Piece</a>
+        <a href="#" class="btn-outline-custom">View Details</a>
+      </div>
+      <div class="col-lg-5 offset-lg-1">
+        <div style="aspect-ratio:4/3; background: linear-gradient(135deg, #6B4E38, #3A2A1E); position:relative; overflow:hidden;">
+          <svg viewBox="0 0 400 300" width="100%" height="100%" fill="none" style="padding:30px;">
+            <!-- Dining table -->
+            <rect x="60" y="120" width="280" height="16" rx="3" fill="#C08B5C" opacity="0.9"/>
+            <rect x="60" y="120" width="280" height="5" rx="2" fill="#D4A574" opacity="0.8"/>
+            <rect x="75" y="136" width="12" height="100" rx="3" fill="#7D5C45"/>
+            <rect x="313" y="136" width="12" height="100" rx="3" fill="#7D5C45"/>
+            <rect x="140" y="136" width="12" height="75" rx="3" fill="#7D5C45" opacity="0.8"/>
+            <rect x="248" y="136" width="12" height="75" rx="3" fill="#7D5C45" opacity="0.8"/>
+            <!-- Chairs around table -->
+            <rect x="90" y="60" width="50" height="55" rx="4" fill="#9B8B6E" opacity="0.8"/>
+            <rect x="85" y="112" width="8" height="8" rx="1" fill="#7D5C45"/>
+            <rect x="132" y="112" width="8" height="8" rx="1" fill="#7D5C45"/>
+            <rect x="200" y="60" width="50" height="55" rx="4" fill="#9B8B6E" opacity="0.8"/>
+            <rect x="195" y="112" width="8" height="8" rx="1" fill="#7D5C45"/>
+            <rect x="242" y="112" width="8" height="8" rx="1" fill="#7D5C45"/>
+            <!-- Plates & glasses -->
+            <ellipse cx="130" cy="118" rx="18" ry="6" fill="#E8DDD0" opacity="0.4"/>
+            <ellipse cx="200" cy="118" rx="18" ry="6" fill="#E8DDD0" opacity="0.4"/>
+            <ellipse cx="270" cy="118" rx="18" ry="6" fill="#E8DDD0" opacity="0.4"/>
+            <circle cx="155" cy="115" r="4" fill="rgba(245,240,232,0.3)"/>
+            <circle cx="225" cy="115" r="4" fill="rgba(245,240,232,0.3)"/>
+          </svg>
+          <!-- overlay tag -->
+          <div style="position:absolute; bottom:20px; right:20px; background:var(--accent); color:var(--white); padding:10px 18px; font-size:10px; letter-spacing:0.15em; text-transform:uppercase;">
+            Solid Walnut
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container-fluid px-4 px-lg-5">
+    <div class="row mb-5">
+      <div class="col text-center">
+        <span class="section-eyebrow">From Our Customers</span>
+        <h2 class="section-title"><em>What They Say</em></h2>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 fade-up">
+        <div class="testimonial-card">
+          <div class="testimonial-rating">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+          </div>
+          <p class="testimonial-text">The craftsmanship is beyond anything I've ever owned. Ten years later, the Lounge Chair No. 7 is still the centrepiece of my living room.</p>
+          <span class="testimonial-author">— M. Svensson, Stockholm</span>
+        </div>
+      </div>
+      <div class="col-md-4 fade-up">
+        <div class="testimonial-card">
+          <div class="testimonial-rating">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+          </div>
+          <p class="testimonial-text">White-glove delivery, incredible packaging, and the dining set arrived flawless. FORMA is what luxury furniture should feel like.</p>
+          <span class="testimonial-author">— C. Moreau, Paris</span>
+        </div>
+      </div>
+      <div class="col-md-4 fade-up">
+        <div class="testimonial-card">
+          <div class="testimonial-rating">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+          </div>
+          <p class="testimonial-text">We furnished our entire studio with FORMA pieces. Every client who visits asks about the furniture. It sparks conversations unlike anything else.</p>
+          <span class="testimonial-author">— H. Nakamura, Tokyo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter">
+  <div class="container">
+    <span class="section-eyebrow d-block text-center mb-2">Stay Informed</span>
+    <h2 class="newsletter-title">Join the FORMA Circle</h2>
+    <p class="newsletter-sub">Early access, new arrivals, and stories from the studio.</p>
+    <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+      <input type="email" class="newsletter-input" placeholder="your@email.com" required>
+      <button type="submit" class="newsletter-submit">Subscribe</button>
+    </form>
+    <p style="font-size:10px; color:var(--bark); margin-top:12px; letter-spacing:0.1em;">No spam. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container-fluid px-4 px-lg-5">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <span class="footer-brand">FORMA</span>
+        <p class="footer-tagline">Artisan Furniture Studio · Est. 2009</p>
+        <p class="footer-desc">Handcrafted furniture born from a passion for natural materials and quiet beauty. Each piece is signed by the maker.</p>
+      </div>
+      <div class="col-6 col-lg-2">
+        <span class="footer-heading">Shop</span>
+        <ul class="footer-links">
+          <li><a href="#">Living Room</a></li>
+          <li><a href="#">Dining Room</a></li>
+          <li><a href="#">Bedroom</a></li>
+          <li><a href="#">Home Office</a></li>
+          <li><a href="#">Accessories</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <span class="footer-heading">Company</span>
+        <ul class="footer-links">
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Craftspeople</a></li>
+          <li><a href="#">Sustainability</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <span class="footer-heading">Support</span>
+        <ul class="footer-links">
+          <li><a href="#">Shipping & Delivery</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Care Guide</a></li>
+          <li><a href="#">Warranty</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <span class="footer-heading">Visit</span>
+        <ul class="footer-links">
+          <li><a href="#">Lisbon Studio</a></li>
+          <li><a href="#">London Showroom</a></li>
+          <li><a href="#">New York Gallery</a></li>
+          <li><a href="#">Tokyo Pop-up</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr class="footer-divider">
+    <div class="footer-bottom">
+      <span>© 2026 FORMA Studio. All rights reserved.</span>
+      <div class="footer-socials">
+        <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="social-link"><i class="bi bi-pinterest"></i></a>
+        <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+        <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+      </div>
+      <span>Privacy · Terms · Cookies</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CART OFFCANVAS -->
+<div class="offcanvas offcanvas-end" id="cartOffcanvas" tabindex="-1">
+  <div class="offcanvas-header border-bottom" style="border-color:var(--sand)!important; padding: 1.5rem 1.5rem 1rem;">
+    <h5 class="offcanvas-title">Your Bag <span style="font-family:var(--font-mono);font-size:11px;color:var(--bark);font-weight:300;" id="cartCountLabel">(3 items)</span></h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body px-3" id="cartBody">
+    <!-- Cart items rendered by JS -->
+  </div>
+</div>
+
+<!-- SEARCH MODAL -->
+<div class="modal fade" id="searchModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <i class="bi bi-search" style="color:var(--bark); font-size:1.3rem;"></i>
+          <input type="text" class="search-input" placeholder="Search furniture..." id="searchInput" autofocus>
+        </div>
+        <p class="search-hint">Try: walnut chair, dining table, oak bookcase…</p>
+        <div style="margin-top:1.5rem;">
+          <p style="font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--bark); margin-bottom:10px;">Popular searches</p>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <span style="font-size:11px; background:var(--sand); padding:5px 12px; cursor:pointer;" onclick="searchFor('Lounge Chair')">Lounge Chair</span>
+            <span style="font-size:11px; background:var(--sand); padding:5px 12px; cursor:pointer;" onclick="searchFor('Dining Table')">Dining Table</span>
+            <span style="font-size:11px; background:var(--sand); padding:5px 12px; cursor:pointer;" onclick="searchFor('Bookcase')">Bookcase</span>
+            <span style="font-size:11px; background:var(--sand); padding:5px 12px; cursor:pointer;" onclick="searchFor('Bed Frame')">Bed Frame</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="cartToast" class="toast custom-toast" role="alert">
+    <div class="d-flex align-items-center p-3" style="gap:10px;">
+      <i class="bi bi-check-circle" style="color:var(--accent); font-size:1.1rem;"></i>
+      <span id="toastMsg">Added to cart</span>
+      <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+$(function () {
+
+  /* ── CART STATE ── */
+  let cart = [
+    { name: 'Lounge Chair No. 7', price: 1240, qty: 1, mat: 'Solid Walnut · Leather' },
+    { name: 'Oval Dining Table',  price: 2100, qty: 1, mat: 'White Oak · Brass' },
+    { name: 'Barrel Accent Chair',price: 760,  qty: 1, mat: 'Ash Wood · Velvet' }
+  ];
+
+  function renderCart() {
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    $('#cartCount').text(count);
+    $('#cartCountLabel').text(`(${count} item${count !== 1 ? 's' : ''})`);
+
+    let html = '<div style="flex:1; overflow-y:auto;">';
+    if (cart.length === 0) {
+      html += '<div style="text-align:center; padding:3rem 0; color:var(--bark);"><i class="bi bi-bag" style="font-size:2rem;"></i><p style="margin-top:1rem; font-size:11px; letter-spacing:0.1em;">Your bag is empty</p></div>';
+    }
+    cart.forEach((item, idx) => {
+      html += `
+        <div class="cart-item">
+          <div class="cart-item-img">
+            <i class="bi bi-image" style="color:var(--bark); font-size:1.5rem;"></i>
+          </div>
+          <div style="flex:1;">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-meta">${item.mat}</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:8px;">
+              <div>
+                <button class="cart-qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+                <span class="cart-qty">${item.qty}</span>
+                <button class="cart-qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+              </div>
+              <span class="cart-item-price">$${(item.price * item.qty).toLocaleString()}</span>
+            </div>
+          </div>
+          <button onclick="removeItem(${idx})" style="background:none;border:none;color:var(--bark);cursor:pointer;align-self:flex-start;font-size:0.9rem;padding:2px;"><i class="bi bi-x"></i></button>
+        </div>`;
+    });
+    html += '</div>';
+    html += `
+      <div class="cart-total-bar mt-3">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1rem;">
+          <span class="cart-total-label">Total</span>
+          <span class="cart-total-amount">$${total.toLocaleString()}</span>
+        </div>
+        <button class="btn-primary-custom w-100 text-center" style="display:block;" onclick="checkout()">Proceed to Checkout</button>
+        <p style="font-size:10px; color:var(--bark); text-align:center; margin-top:10px; letter-spacing:0.1em;">Free shipping on this order</p>
+      </div>`;
+    $('#cartBody').html(html);
+  }
+
+  window.changeQty = function(idx, delta) {
+    cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+    renderCart();
+  };
+  window.removeItem = function(idx) {
+    cart.splice(idx, 1);
+    renderCart();
+    showToast('Item removed from bag');
+  };
+  window.checkout = function() {
+    showToast('Redirecting to checkout…');
+  };
+
+  renderCart();
+
+  /* ── ADD TO CART ── */
+  window.addToCart = function(name, price) {
+    const existing = cart.find(i => i.name === name);
+    if (existing) { existing.qty++; }
+    else { cart.push({ name, price, qty: 1, mat: 'Artisan Crafted' }); }
+    renderCart();
+    showToast(`"${name}" added to bag`);
+  };
+
+  function showToast(msg) {
+    $('#toastMsg').text(msg);
+    const toastEl = document.getElementById('cartToast');
+    const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 2800 });
+    toast.show();
+  }
+
+  /* ── FILTER PRODUCTS ── */
+  $('.filter-btn').on('click', function() {
+    $('.filter-btn').removeClass('active');
+    $(this).addClass('active');
+    const filter = $(this).data('filter');
+    if (filter === 'all') {
+      $('[data-cat]').parent().show();
+    } else {
+      $('[data-cat]').parent().hide();
+      $(`[data-cat="${filter}"]`).parent().show();
+    }
+  });
+
+  /* ── NAVBAR SCROLL ── */
+  $(window).on('scroll', function() {
+    if ($(this).scrollTop() > 60) $('#mainNav').addClass('scrolled');
+    else $('#mainNav').removeClass('scrolled');
+  });
+
+  /* ── FADE UP ON SCROLL ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  /* ── NEWSLETTER ── */
+  window.handleNewsletter = function(e) {
+    e.preventDefault();
+    const email = $(e.target).find('input').val();
+    showToast(`Welcome to FORMA Circle, ${email}`);
+    $(e.target).find('input').val('');
+  };
+
+  /* ── SEARCH ── */
+  window.searchFor = function(term) {
+    $('#searchInput').val(term).focus();
+  };
+
+  /* ── SMOOTH ANCHOR ── */
+  $('a[href^="#"]').on('click', function(e) {
+    const target = $(this.getAttribute('href'));
+    if (target.length) {
+      e.preventDefault();
+      $('html, body').stop().animate({ scrollTop: target.offset().top - 70 }, 600, 'swing');
+    }
+  });
+
+});
+</script>
+</body>
+</html>
